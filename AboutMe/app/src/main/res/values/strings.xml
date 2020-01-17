@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">About Me</string>
+    <string name="name">Gábor Trajtler</string>
+    <string name="yellow_star">Yellow Star</string>
+    <string name="bio">Hi, my name is Gábor.
+        \n\nI like to imagine the world as a simulation or in other words as God\'s dream.
+                \n\nIt makes life easier and facilitates learning different multi-paradigm programming languages.
+            \n\nIt also pops up the question: \"Are we human? Or are we dancer?\" /The Killers/
+                \n\nI doubt we\'ll ever know the answer with human logic. But anyway, life is a good game.
+        \n\n*\n*\n*\n*\n*
+        \n\nI just insert some more text here to see that the scrolling works.
+        \n\nFantastic! \n\n</string>
+</resources>
