@@ -10,4 +10,6 @@
         \n\n*\n*\n*\n*\n*
         \n\nI just insert some more text here to see that the scrolling works.
         \n\nFantastic! \n\n</string>
+    <string name="what_is_your_nickname">What is your Nickname?</string>
+    <string name="done">Done</string>
 </resources>
