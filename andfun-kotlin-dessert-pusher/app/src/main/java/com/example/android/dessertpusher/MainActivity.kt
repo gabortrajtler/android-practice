@@ -27,11 +27,13 @@ import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
 import com.example.android.dessertpusher.databinding.ActivityMainBinding
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), LifecycleObserver {
 
     private var revenue = 0
     private var dessertsSold = 0
+    private lateinit var dessertTimer: DessertTimer
 
     // Contains all the views
     private lateinit var binding: ActivityMainBinding
@@ -73,6 +75,9 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
         binding.dessertButton.setOnClickListener {
             onDessertClicked()
         }
+
+        // Create a DessertTimer
+        dessertTimer = DessertTimer(this.lifecycle)
 
         // Set the TextViews to the right values
         binding.revenue = revenue
@@ -151,6 +156,31 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
     override fun onStart() {
         super.onStart()
-        Log.i("MainActivity", "onStart called")
+        Timber.i("onStart Called - screen is visible")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.i("onResume Called - you can interact with the app")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Timber.i("onPause Called - you cannot interact with the app")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.i("onDestroy Called")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Timber.i("onRestart Called - screen is visible")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.i("onStop Called - screen is not visible")
     }
 }
