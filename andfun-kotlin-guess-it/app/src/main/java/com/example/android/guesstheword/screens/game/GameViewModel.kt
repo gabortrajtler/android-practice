@@ -75,6 +75,9 @@ class GameViewModel : ViewModel() {
 
             override fun onTick(millisUntilFinished: Long) {
                 _currentTime.value = (millisUntilFinished / ONE_SECOND)
+                if (_currentTime.value!! < 11) {
+                    _eventBuzz.value = PANIC_BUZZ_PATTERN
+                }
             }
 
             override fun onFinish() {
@@ -144,6 +147,7 @@ class GameViewModel : ViewModel() {
 
     fun onCorrect() {
         _score.value = score.value?.plus(1)
+        _eventBuzz.value = CORRECT_BUZZ_PATTERN
         nextWord()
     }
 
