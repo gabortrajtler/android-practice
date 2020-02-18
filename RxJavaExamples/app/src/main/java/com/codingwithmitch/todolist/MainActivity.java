@@ -12,6 +12,7 @@ import com.codingwithmitch.todolist.util.DataSource;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
@@ -23,17 +24,20 @@ public class MainActivity extends AppCompatActivity {
     // UI
     private TextView text;
 
+    // vars
+    private CompositeDisposable disposables = new CompositeDisposable();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Observable<Task> taskObservable = Observable
-                .fromIterable(DataSource.createTaskList())
-                .subscribeOn(Schedulers.io())
+        Observable<Task> taskObservable = Observable            // create new observable
+                .fromIterable(DataSource.createTaskList())      // apply operator
+                .subscribeOn(Schedulers.io())                   // designate worker thread (BG)
                 .filter(new Predicate<Task>() {
                     @Override
-                    public boolean test(Task task) throws Exception {
+                    public boolean test(Task task) throws Exception {                  // filter elements
                         Log.d(TAG, "test: -- " + Thread.currentThread().getName()  + " BG thread --");
                         try {
                             Thread.sleep(1000);
@@ -43,12 +47,13 @@ public class MainActivity extends AppCompatActivity {
                         return task.isComplete();
                     }
                 })
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(AndroidSchedulers.mainThread());     // designate observer thread (main)
         
         taskObservable.subscribe(new Observer<Task>() {
             @Override
             public void onSubscribe(Disposable d) {
                 Log.d(TAG, "onSubscribe: called.");
+                disposables.add(d);
             }
 
             @Override
@@ -69,5 +74,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposables.clear();
+    }
 }
