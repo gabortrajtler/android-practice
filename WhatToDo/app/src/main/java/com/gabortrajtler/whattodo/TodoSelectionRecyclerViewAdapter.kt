@@ -4,9 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class TodoSelectionRecyclerViewAdapter : RecyclerView.Adapter<TodoSelectionViewHolder>() {
-
-    val whatTodoTitles = arrayOf("Shopping list", "inni", "Android tutorials")
+class TodoSelectionRecyclerViewAdapter(private val whatTodoTitles: MutableList<String>) : RecyclerView.Adapter<TodoSelectionViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoSelectionViewHolder {
         val view = LayoutInflater.from(parent?.context)
