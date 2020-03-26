@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="WhatTodoFragment">
+
+        <EditText
+            android:id="@+id/add_todo_edit"
+            android:layout_width="252dp"
+            android:layout_height="47dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:ems="10"
+            android:hint="@string/enter_todo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- With data binding and LiveData, we can track the buttons' visibility states
+                from the ViewModel. The click handler is in the ViewModel as well, and
+                you can set it for the Views using this lambda pattern. -->
+        <Button
+            android:id="@+id/add_todo_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="30dp"
+            android:text="@string/add"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/add_todo_edit"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/todo_recycleview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin15"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/add_todo_edit" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
