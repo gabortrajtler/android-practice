@@ -38,5 +38,5 @@ interface WhatTodoDatabaseDao {
     fun getTodoWithId(key: Long): LiveData<WhatTodo>
 
     @Query("DELETE FROM whattodo_table")
-    suspend fun deleteAll()
+    fun deleteAll()
 }
