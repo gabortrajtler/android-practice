@@ -35,7 +35,7 @@ interface WhatTodoDatabaseDao {
      * Selects and returns the whatTodo with given todoId.
      */
     @Query("SELECT * from whattodo_table WHERE todoId = :key")
-    fun getTodoWithId(key: Long): LiveData<WhatTodo>
+    fun getTodoWithId(key: Long): WhatTodo?
 
     @Query("DELETE FROM whattodo_table")
     fun deleteAll()

@@ -1,19 +1,12 @@
 package com.gabortrajtler.whattodo
 
 import android.app.Application
-import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.gabortrajtler.whattodo.database.WhatTodo
 import com.gabortrajtler.whattodo.database.WhatTodoDatabase
-import com.gabortrajtler.whattodo.database.WhatTodoDatabaseDao
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class WhatTodoViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -21,6 +14,7 @@ class WhatTodoViewModel(application: Application) : AndroidViewModel(application
     private val repository: WhatTodoRepository
     // LiveData gives us updated words when they change.
     val allTodos: LiveData<List<WhatTodo>>
+    lateinit var todo: WhatTodo
 
     init {
         // Gets reference to WhatTodoDatabaseDao from WhatTodoDatabase to construct
@@ -41,14 +35,10 @@ class WhatTodoViewModel(application: Application) : AndroidViewModel(application
         repository.insert(whatTodo)
     }
 
-/*    private fun addTodo(view: View?) {
-        uiScope.launch {
-            val newWhatTodo = WhatTodo()
-            newWhatTodo.todoText = addTodoEdit.text.toString()
-
-            insert(newWhatTodo)
-            Toast.makeText(activity, "Added: ${newWhatTodo.todoText}", Toast.LENGTH_SHORT).show()
+    fun completeTodo(id: Long) {
+        viewModelScope.launch {
+            repository.completeTodo(id)
         }
-    }*/
+    }
 
 }

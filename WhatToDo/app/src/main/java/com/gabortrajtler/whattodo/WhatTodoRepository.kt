@@ -8,9 +8,19 @@ import kotlinx.coroutines.withContext
 
 class WhatTodoRepository (private val database: WhatTodoDatabaseDao) {
 
+    lateinit var todo: WhatTodo
+
     // Room executes all queries on a separate thread.
     // Observed LiveData will notify the observer when the data has changed.
     val allTodos: LiveData<List<WhatTodo>> = database.getAllTodos()
+
+    suspend fun completeTodo(id: Long) {
+        withContext(Dispatchers.IO) {
+            todo = database.getTodoWithId(id) ?: return@withContext
+            todo.isCompleted = true
+            database.update(todo)
+        }
+    }
 
     suspend fun update(whatTodo: WhatTodo) {
         withContext(Dispatchers.IO) {
