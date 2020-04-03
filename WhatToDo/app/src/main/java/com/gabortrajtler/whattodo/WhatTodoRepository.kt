@@ -6,7 +6,7 @@ import com.gabortrajtler.whattodo.database.WhatTodoDatabaseDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class WhatTodoRepository (private val database: WhatTodoDatabaseDao) {
+class WhatTodoRepository(private val database: WhatTodoDatabaseDao) {
 
     lateinit var todo: WhatTodo
 
@@ -14,7 +14,13 @@ class WhatTodoRepository (private val database: WhatTodoDatabaseDao) {
     // Observed LiveData will notify the observer when the data has changed.
     val allTodos: LiveData<List<WhatTodo>> = database.getAllTodos()
 
-    suspend fun completeTodo(id: Long) {
+    suspend fun getLatestTodoId(): Int {
+        return withContext(Dispatchers.IO) {
+            database.getLatestId()
+        }
+    }
+
+    suspend fun completeTodo(id: Int) {
         withContext(Dispatchers.IO) {
             todo = database.getTodoWithId(id) ?: return@withContext
             todo.isCompleted = true

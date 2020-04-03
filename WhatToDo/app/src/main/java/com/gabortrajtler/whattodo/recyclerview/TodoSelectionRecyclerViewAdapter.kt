@@ -31,7 +31,7 @@ class TodoSelectionRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: TodoSelectionViewHolder, position: Int) {
         val currentTodo = whatTodos[position]
-        holder.todoPosition.text = position.toString()
+        holder.todoPosition.text = currentTodo.todoId.toString()
         holder.todoTitle.text = currentTodo.todoText
         setCompletion(holder, currentTodo)
     }

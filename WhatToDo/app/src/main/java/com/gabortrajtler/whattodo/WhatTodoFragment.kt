@@ -59,7 +59,7 @@ class WhatTodoFragment : Fragment(), TodoSelectionRecyclerViewAdapter.OnTodoEven
     private fun observeWhatTodos() {
         // Observe LiveData<List<WhatTodo>> in VM (<- DB) and change the RecycleView Adapter accordingly
         whatTodoViewModel.allTodos.observe(viewLifecycleOwner, Observer { todos ->
-            // Update the cached copy of the words in the adapter.
+            // Update the cached copy of the todos in the adapter.
             todos?.let { adapter.setTodos(it) }
         })
     }
@@ -88,7 +88,7 @@ class WhatTodoFragment : Fragment(), TodoSelectionRecyclerViewAdapter.OnTodoEven
     }
 
     override fun onTodoClick(position: Int) {
-        whatTodoViewModel.completeTodo(position.toLong())
+        whatTodoViewModel.completeTodo(position)
         Toast.makeText(requireContext(), "clicked at: $position", Toast.LENGTH_SHORT).show()
     }
 

@@ -35,8 +35,9 @@ class WhatTodoViewModel(application: Application) : AndroidViewModel(application
         repository.insert(whatTodo)
     }
 
-    fun completeTodo(id: Long) {
+    fun completeTodo(position: Int) {
         viewModelScope.launch {
+            val id = repository.getLatestTodoId() - position
             repository.completeTodo(id)
         }
     }
