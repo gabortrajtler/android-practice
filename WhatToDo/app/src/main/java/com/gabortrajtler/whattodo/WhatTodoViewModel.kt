@@ -14,7 +14,6 @@ class WhatTodoViewModel(application: Application) : AndroidViewModel(application
     private val repository: WhatTodoRepository
     // LiveData gives us updated words when they change.
     val allTodos: LiveData<List<WhatTodo>>
-    lateinit var todo: WhatTodo
 
     init {
         // Gets reference to WhatTodoDatabaseDao from WhatTodoDatabase to construct
@@ -35,9 +34,8 @@ class WhatTodoViewModel(application: Application) : AndroidViewModel(application
         repository.insert(whatTodo)
     }
 
-    fun completeTodo(position: Int) {
+    fun completeTodo(id: Int) {
         viewModelScope.launch {
-            val id = repository.getLatestTodoId() - position
             repository.completeTodo(id)
         }
     }

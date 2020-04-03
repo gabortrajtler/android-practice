@@ -69,7 +69,7 @@ class WhatTodoFragment : Fragment(), TodoSelectionRecyclerViewAdapter.OnTodoEven
     }
 
     private fun addTodo(view: View?) {
-        val whatTodo = WhatTodo(todoText = addTodoEdit.text.toString())
+        val whatTodo = WhatTodo(todoText = addTodoEdit.text.toString(), todoId = adapter.itemCount)
         whatTodoViewModel.insert(whatTodo)
 
         Toast.makeText(requireContext(), "Added: ${addTodoEdit.text}", Toast.LENGTH_SHORT).show()
@@ -88,7 +88,7 @@ class WhatTodoFragment : Fragment(), TodoSelectionRecyclerViewAdapter.OnTodoEven
     }
 
     override fun onTodoClick(position: Int) {
-        whatTodoViewModel.completeTodo(position)
+        whatTodoViewModel.completeTodo(adapter.whatTodos.get(position).todoId)
         Toast.makeText(requireContext(), "clicked at: $position", Toast.LENGTH_SHORT).show()
     }
 

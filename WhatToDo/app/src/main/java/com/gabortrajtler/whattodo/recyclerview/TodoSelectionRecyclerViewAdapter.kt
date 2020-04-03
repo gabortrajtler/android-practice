@@ -16,7 +16,7 @@ class TodoSelectionRecyclerViewAdapter(
     RecyclerView.Adapter<TodoSelectionViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var whatTodos = emptyList<WhatTodo>() // Cached copy of todos
+    var whatTodos = emptyList<WhatTodo>() // Cached copy of todos
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoSelectionViewHolder {
         val view = inflater.inflate(R.layout.todo_selection_view_holder, parent, false)
