@@ -1,9 +1,7 @@
 package com.gabortrajtler.whattodo.recyclerview
 
 import android.content.Context
-import android.provider.Settings.Global.getString
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gabortrajtler.whattodo.R
@@ -31,7 +29,6 @@ class TodoSelectionRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: TodoSelectionViewHolder, position: Int) {
         val currentTodo = whatTodos[position]
-        holder.todoPosition.text = currentTodo.todoId.toString()
         holder.todoTitle.text = currentTodo.todoText
         setCompletion(holder, currentTodo)
     }
@@ -41,12 +38,20 @@ class TodoSelectionRecyclerViewAdapter(
         currentTodo: WhatTodo
     ) {
         if (currentTodo.isCompleted) {
-            // Every ViewHolder instance has an itemView field, which is an instance of View.
-            // Every View instance has a getContext() method; you can use this to access resources.
-            holder.todoIsComplete.text = holder.itemView.context.getString(R.string.done) // "DONE"
+            setImagesAndColorsIfComplete(holder)
         } else {
-            holder.todoIsComplete.text = ""
+            setImagesAndColorsByDefault(holder)
         }
+    }
+
+    private fun setImagesAndColorsByDefault(holder: TodoSelectionViewHolder) {
+        holder.todoCheckBox.setImageResource(android.R.drawable.checkbox_off_background)
+        holder.itemView.setBackgroundResource(R.color.custColorDarkYellow)
+    }
+
+    private fun setImagesAndColorsIfComplete(holder: TodoSelectionViewHolder) {
+        holder.todoCheckBox.setImageResource(android.R.drawable.checkbox_on_background)
+        holder.itemView.setBackgroundResource(R.color.colorPrimaryDark)
     }
 
     internal fun setTodos(whatTodos: List<WhatTodo>) {

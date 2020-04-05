@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
  * This pattern is pretty much the same for any database,
  * so you can reuse it.
  */
-@Database(entities = [WhatTodo::class], version = 1, exportSchema = false)
+@Database(entities = [WhatTodo::class], version = 2, exportSchema = false)
 abstract class WhatTodoDatabase : RoomDatabase() {
 
     abstract fun whatTodoDatabaseDao(): WhatTodoDatabaseDao
@@ -71,17 +71,9 @@ abstract class WhatTodoDatabase : RoomDatabase() {
          * If you want to start with more words, just add them.
          */
         fun populateDatabase(whatTodoDatabaseDao: WhatTodoDatabaseDao) {
-            // Start the app with a clean database every time.
-            // Not needed if you only populate on creation.
-            whatTodoDatabaseDao.deleteAll()
-
-            // Add sample todos...
-            var whatTodo = WhatTodo(todoText = "Hello")
-            whatTodoDatabaseDao.insert(whatTodo)
-            whatTodo = WhatTodo(todoText = "World!")
-            whatTodoDatabaseDao.insert(whatTodo)
-            whatTodo = WhatTodo(todoText = "Hard... Really...")
-            whatTodoDatabaseDao.insert(whatTodo)
+            // Insert sample todos if you want...
+//            var whatTodo = WhatTodo(todoText = "Complete with a click, delete with another")
+//            whatTodoDatabaseDao.insert(whatTodo)
         }
     }
 }

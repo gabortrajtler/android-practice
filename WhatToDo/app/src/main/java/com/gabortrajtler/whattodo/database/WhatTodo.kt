@@ -6,11 +6,12 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "whattodo_table")
 data class WhatTodo(
-    @PrimaryKey(autoGenerate = true)
-    var todoId: Int = 0,
-
+    @PrimaryKey
     @ColumnInfo(name = "todo_text")
     var todoText: String = "",
+
+    @ColumnInfo(name = "todo_id")
+    var todoId: Int = 0,
 
     @ColumnInfo(name = "is_completed")
     var isCompleted: Boolean = false

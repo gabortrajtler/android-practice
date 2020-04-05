@@ -28,18 +28,18 @@ interface WhatTodoDatabaseDao {
      * Selects and returns all rows in the table,
      * sorted by start time in descending order.
      */
-    @Query("SELECT * FROM whattodo_table ORDER BY todoId DESC")
+    @Query("SELECT * FROM whattodo_table ORDER BY todo_id DESC")
     fun getAllTodos(): LiveData<List<WhatTodo>>
 
     /**
-     * Selects and returns the whatTodo with given todoId.
+     * Selects and returns the whatTodo with given todo_text.
      */
-    @Query("SELECT * FROM whattodo_table WHERE todoId = :key")
-    fun getTodoWithId(key: Int): WhatTodo?
+    @Query("SELECT * FROM whattodo_table WHERE todo_text = :key")
+    fun getTodoWithName(key: String): WhatTodo?
 
-    @Query("SELECT todoId FROM whattodo_table ORDER BY todoId DESC LIMIT 1")
-    fun getLatestId(): Int
-
-    @Query("DELETE FROM whattodo_table")
-    fun deleteAll()
+    /**
+     * Deletes a whatTodo entry.
+     */
+    @Query("DELETE FROM whattodo_table WHERE todo_text = :key")
+    fun delete(key: String)
 }

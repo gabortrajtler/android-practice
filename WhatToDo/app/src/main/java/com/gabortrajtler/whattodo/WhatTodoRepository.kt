@@ -14,17 +14,23 @@ class WhatTodoRepository(private val database: WhatTodoDatabaseDao) {
     // Observed LiveData will notify the observer when the data has changed.
     val allTodos: LiveData<List<WhatTodo>> = database.getAllTodos()
 
-    suspend fun completeTodo(id: Int) {
+    suspend fun insert(whatTodo: WhatTodo) {
         withContext(Dispatchers.IO) {
-            todo = database.getTodoWithId(id) ?: return@withContext
+            database.insert(whatTodo)
+        }
+    }
+
+    suspend fun completeTodo(todoName: String) {
+        withContext(Dispatchers.IO) {
+            todo = database.getTodoWithName(todoName) ?: return@withContext
             todo.isCompleted = true
             database.update(todo)
         }
     }
 
-    suspend fun insert(whatTodo: WhatTodo) {
+    suspend fun deleteTodo(todoName: String) {
         withContext(Dispatchers.IO) {
-            database.insert(whatTodo)
+            database.delete(todoName)
         }
     }
 }

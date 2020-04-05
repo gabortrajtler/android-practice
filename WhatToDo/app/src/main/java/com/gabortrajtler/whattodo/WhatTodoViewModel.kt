@@ -34,9 +34,15 @@ class WhatTodoViewModel(application: Application) : AndroidViewModel(application
         repository.insert(whatTodo)
     }
 
-    fun completeTodo(id: Int) {
+    fun completeTodo(todoName: String) {
         viewModelScope.launch {
-            repository.completeTodo(id)
+            repository.completeTodo(todoName)
+        }
+    }
+
+    fun deleteTodo(todoName: String) {
+        viewModelScope.launch {
+            repository.deleteTodo(todoName)
         }
     }
 

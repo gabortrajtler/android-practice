@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -69,12 +68,28 @@ class WhatTodoFragment : Fragment(), TodoSelectionRecyclerViewAdapter.OnTodoEven
     }
 
     private fun addTodo(view: View?) {
-        val whatTodo = WhatTodo(todoText = addTodoEdit.text.toString(), todoId = adapter.itemCount)
-        whatTodoViewModel.insert(whatTodo)
-
-        Toast.makeText(requireContext(), "Added: ${addTodoEdit.text}", Toast.LENGTH_SHORT).show()
+        val addTodoText = addTodoEdit.text.toString()
+        val allWhatTodos = adapter.whatTodos
+        if (addTodoText.isNotEmpty()) {
+            val whatTodo =
+                WhatTodo(todoText = addTodoText, todoId = adapter.itemCount)
+            var contains = false
+            for (todo in allWhatTodos) {
+                if (todo.todoText == whatTodo.todoText) {
+                    contains = true
+                }
+            }
+            if(!contains) {
+                whatTodoViewModel.insert(whatTodo)
+            }
+        }
 
         hideKeyboard()
+        clearTodoEdit()
+    }
+
+    private fun clearTodoEdit() {
+        addTodoEdit.text.clear()
     }
 
     private fun hideKeyboard() {
@@ -88,8 +103,12 @@ class WhatTodoFragment : Fragment(), TodoSelectionRecyclerViewAdapter.OnTodoEven
     }
 
     override fun onTodoClick(position: Int) {
-        whatTodoViewModel.completeTodo(adapter.whatTodos.get(position).todoId)
-        Toast.makeText(requireContext(), "clicked at: $position", Toast.LENGTH_SHORT).show()
+        val whatTodo = adapter.whatTodos.get(position)
+        if (whatTodo.isCompleted) {
+            whatTodoViewModel.deleteTodo(whatTodo.todoText)
+        } else {
+            whatTodoViewModel.completeTodo(whatTodo.todoText)
+        }
     }
 
 
