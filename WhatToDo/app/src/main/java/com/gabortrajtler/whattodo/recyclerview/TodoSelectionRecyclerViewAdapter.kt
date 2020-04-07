@@ -46,7 +46,7 @@ class TodoSelectionRecyclerViewAdapter(
 
     private fun setImagesAndColorsByDefault(holder: TodoSelectionViewHolder) {
         holder.todoCheckBox.setImageResource(android.R.drawable.checkbox_off_background)
-        holder.itemView.setBackgroundResource(R.color.custColorDarkYellow)
+        holder.itemView.setBackgroundResource(R.color.custColorDarkRed)
     }
 
     private fun setImagesAndColorsIfComplete(holder: TodoSelectionViewHolder) {
