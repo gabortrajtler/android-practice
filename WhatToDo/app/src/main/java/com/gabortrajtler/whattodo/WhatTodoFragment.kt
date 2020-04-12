@@ -74,7 +74,7 @@ class WhatTodoFragment : Fragment(), TodoSelectionRecyclerViewAdapter.OnTodoEven
             val allWhatTodos = adapter.whatTodos
             val whatTodo =
                 WhatTodo(todoText = addTodoText, todoId = getLatestTodoId(allWhatTodos) + 1)
-            if (!contains(allWhatTodos, whatTodo)) {
+            if (!containsSameText(allWhatTodos, whatTodo)) {
                 whatTodoViewModel.insert(whatTodo)
             }
         }
@@ -93,7 +93,7 @@ class WhatTodoFragment : Fragment(), TodoSelectionRecyclerViewAdapter.OnTodoEven
         }
     }
 
-    private fun contains(
+    private fun containsSameText(
         allWhatTodos: List<WhatTodo>,
         whatTodo: WhatTodo
     ): Boolean {
