@@ -20,17 +20,17 @@ class WhatTodoRepository(private val database: WhatTodoDatabaseDao) {
         }
     }
 
-    suspend fun completeTodo(todoName: String) {
+    suspend fun completeTodo(todoId: Int) {
         withContext(Dispatchers.IO) {
-            todo = database.getTodoWithName(todoName) ?: return@withContext
+            todo = database.getTodoWithId(todoId) ?: return@withContext
             todo.isCompleted = true
             database.update(todo)
         }
     }
 
-    suspend fun deleteTodo(todoName: String) {
+    suspend fun deleteTodo(todoId: Int) {
         withContext(Dispatchers.IO) {
-            database.delete(todoName)
+            database.delete(todoId)
         }
     }
 }

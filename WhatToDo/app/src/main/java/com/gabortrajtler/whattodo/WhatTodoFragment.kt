@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -69,23 +70,46 @@ class WhatTodoFragment : Fragment(), TodoSelectionRecyclerViewAdapter.OnTodoEven
 
     private fun addTodo(view: View?) {
         val addTodoText = addTodoEdit.text.toString()
-        val allWhatTodos = adapter.whatTodos
         if (addTodoText.isNotEmpty()) {
+            val allWhatTodos = adapter.whatTodos
             val whatTodo =
-                WhatTodo(todoText = addTodoText, todoId = adapter.itemCount)
-            var contains = false
-            for (todo in allWhatTodos) {
-                if (todo.todoText == whatTodo.todoText) {
-                    contains = true
-                }
-            }
-            if(!contains) {
+                WhatTodo(todoText = addTodoText, todoId = getLatestTodoId(allWhatTodos) + 1)
+            if (!contains(allWhatTodos, whatTodo)) {
                 whatTodoViewModel.insert(whatTodo)
             }
         }
 
         hideKeyboard()
         clearTodoEdit()
+    }
+
+    private fun getLatestTodoId(
+        allWhatTodos: List<WhatTodo>
+    ): Int {
+        return if (allWhatTodos.isEmpty()) {
+            0
+        } else {
+            allWhatTodos.first().todoId
+        }
+    }
+
+    private fun contains(
+        allWhatTodos: List<WhatTodo>,
+        whatTodo: WhatTodo
+    ): Boolean {
+        var contains = false
+        for (todo in allWhatTodos) {
+            if (todo.todoText == whatTodo.todoText) {
+                contains = true
+                Toast.makeText(
+                    requireContext(),
+                    "There is already a Todo with this name",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return contains
+            }
+        }
+        return contains
     }
 
     private fun clearTodoEdit() {
@@ -105,9 +129,9 @@ class WhatTodoFragment : Fragment(), TodoSelectionRecyclerViewAdapter.OnTodoEven
     override fun onTodoClick(position: Int) {
         val whatTodo = adapter.whatTodos.get(position)
         if (whatTodo.isCompleted) {
-            whatTodoViewModel.deleteTodo(whatTodo.todoText)
+            whatTodoViewModel.deleteTodo(whatTodo.todoId)
         } else {
-            whatTodoViewModel.completeTodo(whatTodo.todoText)
+            whatTodoViewModel.completeTodo(whatTodo.todoId)
         }
     }
 

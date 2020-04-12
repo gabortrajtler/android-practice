@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
  * This pattern is pretty much the same for any database,
  * so you can reuse it.
  */
-@Database(entities = [WhatTodo::class], version = 2, exportSchema = false)
+@Database(entities = [WhatTodo::class], version = 3, exportSchema = false)
 abstract class WhatTodoDatabase : RoomDatabase() {
 
     abstract fun whatTodoDatabaseDao(): WhatTodoDatabaseDao

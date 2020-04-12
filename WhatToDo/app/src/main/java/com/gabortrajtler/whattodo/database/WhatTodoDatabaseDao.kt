@@ -32,14 +32,14 @@ interface WhatTodoDatabaseDao {
     fun getAllTodos(): LiveData<List<WhatTodo>>
 
     /**
-     * Selects and returns the whatTodo with given todo_text.
+     * Selects and returns the whatTodo with given todo_id.
      */
-    @Query("SELECT * FROM whattodo_table WHERE todo_text = :key")
-    fun getTodoWithName(key: String): WhatTodo?
+    @Query("SELECT * FROM whattodo_table WHERE todo_id = :key")
+    fun getTodoWithId(key: Int): WhatTodo?
 
     /**
      * Deletes a whatTodo entry.
      */
-    @Query("DELETE FROM whattodo_table WHERE todo_text = :key")
-    fun delete(key: String)
+    @Query("DELETE FROM whattodo_table WHERE todo_id = :key")
+    fun delete(key: Int)
 }
