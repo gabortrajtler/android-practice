@@ -3,7 +3,6 @@ package com.codingwithmitch.todolist;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,9 +10,6 @@ import com.jakewharton.rxbinding3.view.RxView;
 
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
