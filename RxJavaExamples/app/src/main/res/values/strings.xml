@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RxJavaExamples</string>
+    <string name="clickCounter">click Counter</string>
 </resources>
