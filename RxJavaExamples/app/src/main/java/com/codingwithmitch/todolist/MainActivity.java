@@ -2,72 +2,101 @@ package com.codingwithmitch.todolist;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.jakewharton.rxbinding3.view.RxView;
-
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import kotlin.Unit;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    // global disposables object
-    CompositeDisposable disposables = new CompositeDisposable();
+    //ui
+    private SearchView searchView;
+
+    // vars
+    private CompositeDisposable disposables = new CompositeDisposable();
+    private long timeSinceLastRequest; // for log printouts only. Not part of logic.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        searchView = findViewById(R.id.search_view);
 
-        // detect clicks to a button
-        RxView.clicks(findViewById(R.id.button_click_counter))
-                .map(new Function<Unit, Integer>() { // convert the detected clicks to an integer
+        timeSinceLastRequest = System.currentTimeMillis();
+
+        // create the Observable
+        Observable<String> observableQueryText = Observable
+                .create(new ObservableOnSubscribe<String>() {
                     @Override
-                    public Integer apply(Unit unit) throws Exception {
-                        return 1;
+                    public void subscribe(final ObservableEmitter<String> emitter) throws Exception {
+
+                        // Listen for text input into the SearchView
+                        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                            @Override
+                            public boolean onQueryTextSubmit(String query) {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onQueryTextChange(final String newText) {
+                                if (!emitter.isDisposed()) {
+                                    emitter.onNext(newText); // Pass the query to the emitter
+                                }
+                                return false;
+                            }
+                        });
                     }
                 })
-                .buffer(4, TimeUnit.SECONDS) // capture all the clicks during a 4 second interval
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<Integer>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        disposables.add(d); // add to disposables to you can clear in onDestroy
-                    }
+                .debounce(500, TimeUnit.MILLISECONDS) // Apply Debounce() operator to limit requests
+                .subscribeOn(Schedulers.io());
 
-                    @Override
-                    public void onNext(List<Integer> integers) {
-                        Log.d(TAG, "onNext: You clicked " + integers.size() + " times in 4 seconds!");
-                    }
+        // Subscribe an Observer
+        observableQueryText.subscribe(new Observer<String>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                disposables.add(d);
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
+            @Override
+            public void onNext(String s) {
+                Log.d(TAG, "onNext: time  since last request: " + (System.currentTimeMillis() - timeSinceLastRequest));
+                Log.d(TAG, "onNext: search query: " + s);
+                timeSinceLastRequest = System.currentTimeMillis();
 
-                    }
+                // method for sending a request to the server
+                sendRequestToServer(s);
+            }
 
-                    @Override
-                    public void onComplete() {
+            @Override
+            public void onError(Throwable e) {
+            }
 
-                    }
-                });
-
+            @Override
+            public void onComplete() {
+            }
+        });
     }
 
-    // make sure to clear disposables when the activity is destroyed
+    // Fake method for sending a request to the server
+    private void sendRequestToServer(String query) {
+        // do nothing
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        disposables.clear();
+        disposables.clear(); // clear disposables
     }
 
 }
