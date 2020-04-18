@@ -2,44 +2,60 @@ package com.codingwithmitch.todolist;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProviders;
 
-import java.io.IOException;
+import com.codingwithmitch.todolist.models.Task;
+import com.codingwithmitch.todolist.util.DataSource;
 
-import io.reactivex.disposables.CompositeDisposable;
-import okhttp3.ResponseBody;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-
-    // UI
-    private TextView text;
-
-    // vars
-    private CompositeDisposable disposables = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        viewModel.makeQuery().observe(this, new androidx.lifecycle.Observer<ResponseBody>() {
+        Observable<Task> taskObservable = Observable
+                .fromIterable(DataSource.createTaskList())
+                .filter(new Predicate<Task>() {
+                    @Override
+                    public boolean test(Task task) throws Exception {
+                        return task.getDescription().equals("Walk the dog");
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        taskObservable.subscribe(new Observer<Task>() {
             @Override
-            public void onChanged(ResponseBody responseBody) {
-                Log.d(TAG, "onChanged: this is a live data response!");
-                try {
-                    Log.d(TAG, "onChanged: " + responseBody.string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Task task) {
+                Log.d(TAG, "onNext: This task matches the description: " + task.getDescription());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
             }
         });
+
     }
-
-
 }
