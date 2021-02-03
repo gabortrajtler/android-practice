@@ -1,8 +1,8 @@
 package com.example.android.architecture.blueprints.todoapp.tasks
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.data.source.FakeTestRepository
 import com.example.android.architecture.blueprints.todoapp.getOrAwaitValue
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksFilterType.ALL_TASKS
 import org.hamcrest.Matchers.*
@@ -11,12 +11,13 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 class TasksViewModelTest {
     // Subject under test
     private lateinit var tasksViewModel: TasksViewModel
+
+    // Use a fake repository to be injected into the viewmodel
+    private lateinit var tasksRepository: FakeTestRepository
 
     // Executes each task synchronously using Architecture Components
     @get:Rule
@@ -24,7 +25,13 @@ class TasksViewModelTest {
 
     @Before
     fun setupViewModel() {
-        tasksViewModel = TasksViewModel(ApplicationProvider.getApplicationContext())
+        tasksRepository = FakeTestRepository()
+        val task1 = Task("Megfőzni a kávét", "Forrón", true)
+        val task2 = Task("Meginni a kávét", "Melegen", true)
+        val task3 = Task("Elmosogatni a csészét", "Rendesen")
+        tasksRepository.addTasks(task1, task2, task3)
+
+        tasksViewModel = TasksViewModel(tasksRepository)
     }
 
     @Test
