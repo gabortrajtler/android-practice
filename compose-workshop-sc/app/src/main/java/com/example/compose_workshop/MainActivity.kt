@@ -6,7 +6,13 @@ import android.util.Log
 import android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -22,6 +28,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,6 +72,10 @@ class MainActivity : ComponentActivity() {
                 val scope = rememberCoroutineScope()
 
                 Column {
+                    Grid()
+
+                    Chessboard(1 to 1)
+
                     ClickCount(
                         clickData = clickData,
                         onClick = {
@@ -153,6 +170,76 @@ fun MovieOverview(movie: Movie) {
     Log.i("MovieOverview", movie.id)
 }
 
+@Composable
+fun Grid() {
+    for (i in 0..7) {
+        Row() {
+            for (j in 0..7) {
+                Column() {
+                    Text(text = "${i + 1}, ${j + 1}")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Chessboard(knightDefaultPosition: Pair<Int, Int>) {
+    var knightPosition by remember {
+        mutableStateOf<Pair<Int, Int>?>(knightDefaultPosition.first to knightDefaultPosition.second)
+    }
+
+    Row {
+        repeat(8) { columnIndex ->
+            Column(modifier = Modifier.weight(1f)) {
+                repeat(8) { rowIndex ->
+                    val isKnightCell = columnIndex == knightPosition?.first &&
+                        rowIndex == knightPosition?.second
+
+                    Cell(getCellColor(rowIndex, columnIndex), isKnightCell) {
+                        knightPosition = if (isKnightCell) {
+                            null
+                        } else {
+                            columnIndex to rowIndex
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Cell(
+    color: Color,
+    isKnightCell: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        Modifier
+            .aspectRatio(1f)
+            .background(color)
+            .clickable { onClick() }
+    ) {
+        if (isKnightCell) {
+            Image(
+                painter = painterResource(id = R.drawable.knight),
+                contentDescription = "Knight",
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+}
+
+private fun getCellColor(rowIndex: Int, columnIndex: Int) = if (isLightCell(rowIndex, columnIndex)) {
+    Color.White
+} else {
+    Color.Black
+}
+
+private fun isLightCell(rowIndex: Int, columnIndex: Int) =
+    (rowIndex.mod(2) == 0) == (columnIndex.mod(2) == 0)
+
 @Parcelize
 data class ClickData(
     val clicks: Int,
@@ -165,3 +252,20 @@ data class Movie(
     val title: String,
     val date: LocalDate
 )
+
+@Preview
+@Composable
+fun ChessboardPreview(
+    @PreviewParameter(ChessboardPreviewParameterProvider::class) knightPosition: Pair<Int, Int>
+) {
+    Chessboard(knightPosition)
+}
+
+class ChessboardPreviewParameterProvider : PreviewParameterProvider<Pair<Int, Int>> {
+    override val values: Sequence<Pair<Int, Int>>
+        get() = sequenceOf(
+            0 to 3,
+            3 to 7,
+            7 to 5
+        )
+}
