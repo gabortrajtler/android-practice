@@ -13,10 +13,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,7 +52,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MaterialTheme {
+            var isDarkTheme by remember { mutableStateOf(true) }
+
+            MaterialTheme(colors = if (isDarkTheme) darkColors() else lightColors()) {
                 var clickData by rememberSaveable {
                     mutableStateOf(
                         ClickData(
@@ -71,43 +78,59 @@ class MainActivity : ComponentActivity() {
 
                 val scope = rememberCoroutineScope()
 
-                Column {
-                    Grid()
+                LazyColumn {
+                    item {
+                        ImplicitGreeting()
 
-                    Chessboard(1 to 1)
+                        var name by remember { mutableStateOf("World") }
 
-                    ClickCount(
-                        clickData = clickData,
-                        onClick = {
-                            clickData = ClickData(
-                                clicks = clickData.clicks + 1,
-                                time = Date().toString()
-                            )
+                        CompositionLocalProvider(LocalName provides "Android") {
+                            ImplicitGreeting()
                         }
-                    )
 
-                    MovieList(
-                        list = movies.value,
-                        onAddClicked = {
-                            scope.launch {
-                                addNewMovie(movies)
+                        Button(onClick = {
+                            name = "Android"
+                            isDarkTheme = !isDarkTheme
+                        }) {
+                            Text(text = "Change colors!")
+                        }
+
+                        Grid()
+
+                        Chessboard(1 to 1)
+
+                        ClickCount(
+                            clickData = clickData,
+                            onClick = {
+                                clickData = ClickData(
+                                    clicks = clickData.clicks + 1,
+                                    time = Date().toString()
+                                )
+                            }
+                        )
+
+                        MovieList(
+                            list = movies.value,
+                            onAddClicked = {
+                                scope.launch {
+                                    addNewMovie(movies)
+                                }
+                            }
+                        )
+
+                        LaunchedEffect(movies.value) {
+                            logMoviesToAnalytics(movies.value)
+                        }
+
+                        DisposableEffect(Unit) {
+                            val originalMode = window.attributes.softInputMode
+                            window.setSoftInputMode(SOFT_INPUT_ADJUST_PAN)
+
+                            onDispose {
+                                window.setSoftInputMode(originalMode)
                             }
                         }
-                    )
-
-                    LaunchedEffect(movies.value) {
-                        logMoviesToAnalytics(movies.value)
                     }
-
-                    DisposableEffect(Unit) {
-                        val originalMode = window.attributes.softInputMode
-                        window.setSoftInputMode(SOFT_INPUT_ADJUST_PAN)
-
-                        onDispose {
-                            window.setSoftInputMode(originalMode)
-                        }
-                    }
-
                 }
             }
         }
@@ -229,6 +252,13 @@ private fun Cell(
             )
         }
     }
+}
+
+val LocalName = staticCompositionLocalOf { "World" }
+
+@Composable
+fun ImplicitGreeting() {
+    Text(text = "Hello ${LocalName.current}!")
 }
 
 private fun getCellColor(rowIndex: Int, columnIndex: Int) = if (isLightCell(rowIndex, columnIndex)) {
